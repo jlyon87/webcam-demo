@@ -34,18 +34,18 @@
 <script>
 export default {
   methods: {
-    getVideo() {
+    getVideo () {
       navigator.mediaDevices.getUserMedia({ video: true, audio: false })
         .then(mediaStream => {
           this.$refs.video.srcObject = mediaStream
           this.$refs.video.play()
         })
         .catch(err => {
-          console.error('woops')
+          console.error('woops', err)
         })
     },
 
-    paintToCanvas() {
+    paintToCanvas () {
       const width = this.$refs.video.videoWidth
       const height = this.$refs.video.videoHeight
       this.$refs.canvas.width = width
@@ -54,7 +54,7 @@ export default {
       const ctx = this.$refs.canvas.getContext('2d')
       return setInterval(() => {
         ctx.drawImage(this.$refs.video, 0, 0, width, height)
-        let pixels = ctx.getImageData(0, 0, width, height)
+        // let pixels = ctx.getImageData(0, 0, width, height)
 
         // pixels = this.redEffect(pixels)
 
@@ -67,11 +67,11 @@ export default {
       }, 16)
     },
 
-    takePhoto() {
-      this.$refs.snap.currentTime = 0;
-      this.$refs.snap.play();
+    takePhoto () {
+      this.$refs.snap.currentTime = 0
+      this.$refs.snap.play()
 
-      const data = this.$refs.canvas.toDataURL('image/png');
+      const data = this.$refs.canvas.toDataURL('image/png')
       const link = document.createElement('a')
       link.href = data
       link.setAttribute('download', 'handsome')
@@ -79,17 +79,17 @@ export default {
       this.$refs.strip.insertBefore(link, this.$refs.strip.firstChild)
     },
 
-    redEffect(pixels) {
-      for(let i = 0; i < pixels.data.length; i+=4) {
+    redEffect (pixels) {
+      for (let i = 0; i < pixels.data.length; i += 4) {
         pixels.data[i] = pixels.data[i + 0] + 100 // r
-        pixels.data[i + 1] = pixels.data[i + 1] -50 // g
+        pixels.data[i + 1] = pixels.data[i + 1] - 50 // g
         pixels.data[i + 2] = pixels.data[i + 2] * 0.5 // b
       }
       return pixels
     },
 
-    rgbSplit(pixels) {
-      for(let i = 0; i < pixels.data.length; i+=4) {
+    rgbSplit (pixels) {
+      for (let i = 0; i < pixels.data.length; i += 4) {
         pixels.data[i - 150] = pixels.data[i + 0] // r
         pixels.data[i + 500] = pixels.data[i + 1] // g
         pixels.data[i - 550] = pixels.data[i + 2] // b
@@ -97,35 +97,35 @@ export default {
       return pixels
     },
 
-    greenScreen(pixels) {
-      const levels = {};
+    greenScreen (pixels) {
+      const levels = {}
 
       document.querySelectorAll('.rgb input').forEach((input) => {
-        levels[input.name] = input.value;
-      });
+        levels[input.name] = input.value
+      })
 
       for (let i = 0; i < pixels.data.length; i = i + 4) {
-        const red = pixels.data[i + 0];
-        const green = pixels.data[i + 1];
-        const blue = pixels.data[i + 2];
-        const alpha = pixels.data[i + 3];
+        const red = pixels.data[i + 0]
+        const green = pixels.data[i + 1]
+        const blue = pixels.data[i + 2]
+        // const alpha = pixels.data[i + 3]
 
-        if (red >= levels.rmin
-          && green >= levels.gmin
-          && blue >= levels.bmin
-          && red <= levels.rmax
-          && green <= levels.gmax
-          && blue <= levels.bmax) {
+        if (red >= levels.rmin &&
+          green >= levels.gmin &&
+          blue >= levels.bmin &&
+          red <= levels.rmax &&
+          green <= levels.gmax &&
+          blue <= levels.bmax) {
           // take it out!
-          pixels.data[i + 3] = 0;
+          pixels.data[i + 3] = 0
         }
       }
 
-      return pixels;
+      return pixels
     }
   },
 
-  mounted() {
+  mounted () {
     this.getVideo()
   }
 }

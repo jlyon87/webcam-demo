@@ -2,7 +2,6 @@
   "standard.autoFixOnSave": true,
   "standard.validate": [
     "javascript",
-    "javascriptreact",
     {
       "language": "vue",
       "autoFix": true
